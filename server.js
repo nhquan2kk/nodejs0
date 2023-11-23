@@ -1,4 +1,7 @@
+
+const { default: mongoose } = require("mongoose");
 const app = require("./src/app");
+
 
 PORT = 3055
 
