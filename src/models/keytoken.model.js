@@ -10,13 +10,21 @@ var keyTokenSchema = new Schema({
         required: true,
         ref: 'user'
     },
+    privateKey: {
+        type: String,
+        required: true
+    },
     publicKey: {
         type: String,
         required: true
     },
-    refreshToken: {
+    refreshTokenUsed: { //nhung refresh tokens da duoc su dung
         type: Array,
         default: []
+    },
+    refreshToken: {
+        type: String,
+        required: true
     }
 }, {
     collection: COLLECTION_NAME,
