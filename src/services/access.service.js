@@ -7,6 +7,7 @@ const KeyTokenService = require("./keyToken.service")
 const { createTokenPair } = require("../auth/authUtils")
 const { BadRequestError, AuthFailureError } = require("../core/error.response")
 const { findByEmail } = require("./shop.service")
+const { getInfoData } = require("../utils")
 
 const RoleShop = {
     SHOP: 'SHOP',
@@ -26,7 +27,8 @@ class AccessService {
         5 - get data return logins
     */
     static login = async ({ email, password, refreshToken = null }) => {
-        const foundShop = findByEmail({ email })
+
+        const foundShop = await findByEmail({ email })
         if (!foundShop) throw new BadRequestError('shop not registered')
 
         const match = bcrypt.compare(password, foundShop.password)
@@ -35,18 +37,19 @@ class AccessService {
         const privateKey = crypto.randomBytes(64).toString('hex')
         const publicKey = crypto.randomBytes(64).toString('hex')
 
-        const tokens = await createTokenPair({ userId: foundShop._id, email }, publicKeyString, privateKey)
+        const tokens = await createTokenPair({ userId: foundShop._id, email }, publicKey, privateKey)
 
         await KeyTokenService.createKeyToken({
             refreshToken: tokens.refreshToken,
-            privateKey, publicKey
+            privateKey, publicKey,
         })
+
         return {
             shop: getInfoData({ fileds: ['_id', 'name', 'email'], object: foundShop }),
             tokens
         }
-    }
 
+    }
 
     static signUp = async ({ name, email, password }) => {
         // try {
