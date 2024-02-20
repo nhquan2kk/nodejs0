@@ -8,7 +8,7 @@ class AccessController {
     logout = async (req, res, next) => {
         new SuccessResponse({
             message: 'Logout Success!',
-            metadata: await AccessService.logout(req.keyStore)
+            metadata: await AccessService.logout(req.headers.authorization)
         }).send(res)
     }
 
